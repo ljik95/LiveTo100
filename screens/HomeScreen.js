@@ -1,242 +1,178 @@
 import React from 'react';
 import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { WebBrowser, Pedometer } from 'expo';
-
-import { MonoText } from '../components/StyledText';
+  Container,
+  Header,
+  Title,
+  Content,
+  Button,
+  Icon,
+  Left,
+  Right,
+  Body,
+  Text
+} from "native-base";
+import { StyleSheet, View, Image, Alert } from 'react-native'
+import { WebBrowser } from 'expo';
+import { fetchGold, storeGold } from '../Storage';
 
 export default class HomeScreen extends React.Component {
-  state = {
-    isPedometerAvailable: "checking",
-    pastStepCount: 0,
-    currentStepCount: 0
-  };
 
-  componentDidMount = () => {
-    this._subscribe();
+  constructor() {
+    super();
+    this.state = {
+      gold: 0,
+      weaponLvl: 1,
+      helmetLvl: 1,
+    }
+    this.refresh = this.refresh.bind(this);
+    this.upgradeDart = this.upgradeDart.bind(this);
+    this.upgradeHelmet = this.upgradeHelmet.bind(this);
   }
-
-  componentWillUnmount = () => {
-    this._unsubscribe();
-  }
-
-  _subscribe = () => {
-    this._subscription = Pedometer.watchStepCount(result => {
-      this.setState({
-        currentStepCount: result.steps
-      });
-    });
-
-    Pedometer.isAvailableAsync().then(
-      result => {
-        this.setState({
-          isPedometerAvailable: String(result)
-        });
-      },
-      error => {
-        this.setState({
-          isPedometerAvailable: "Could not get isPedometerAvailable: " + error
-        });
-      }
-    );
-
-    const end = new Date();
-    const start = new Date();
-    start.setDate(end.getDate() - 1);
-    Pedometer.getStepCountAsync(start, end).then(
-      result => {
-        this.setState({ pastStepCount: result.steps });
-      },
-      error => {
-        this.setState({
-          pastStepCount: "Could not get stepCount: " + error
-        });
-      }
-    );
-  };
-
-  _unsubscribe = () => {
-    this._subscription && this._subscription.remove();
-    this._subscription = null;
-  };
 
   static navigationOptions = {
-    title: 'Welcome',
+    title: 'Shop',
+  }
+
+  async componentDidMount() {
+    this.setState({gold: await fetchGold()});
+  }
+
+  async refresh() {
+    this.setState({gold: await fetchGold()});
+  }
+
+  upgradeDart() {
+    storeGold(this.state.gold - 100);
+    this.setState({
+      weaponLvl: this.state.weaponLvl + 1,
+      gold: this.state.gold - 100
+    })
+    console.log(this.state.gold)
+  }
+
+  upgradeHelmet() {
+    storeGold(this.state.gold - 100);
+    this.setState({
+      helmetLvl: this.state.helmetLvl + 1,
+      gold: this.state.gold - 100
+    })
   }
 
   render() {
     return (
-      <View style={styles.container}>
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-          <View style={styles.welcomeContainer}>
+      <Container style={styles.container}>
+        <Content padder>
+          <View style={{flexDirection: 'row', justifyContent: 'center', height: 50, marginVertical: 20}}>
             <Image
-              source={
-                __DEV__
-                  ? require('../assets/images/robot-dev.png')
-                  : require('../assets/images/robot-prod.png')
-              }
-              style={styles.welcomeImage}
+            source={{ uri: 'https://lh5.ggpht.com/j0fhQF9XI7o3_79a1w5gHQUMS5_GCWXVGmE_r1Pn_XZFDIWbxnn4JzNPAk5RcVpceg=w300' }}
+            style={{ width: 70, height: 60}}
+            resizeMode="cover"
             />
-          </View>
-
-          <View style={styles.getStartedContainer}>
-            {this._maybeRenderDevelopmentModeWarning()}
-
-            <Text style={styles.getStartedText}>Get started by opening</Text>
-
-            <View style={[styles.codeHighlightContainer, styles.homeScreenFilename]}>
-              <MonoText style={styles.codeHighlightText}>screens/HomeScreen.js</MonoText>
+            <View style={{flexDirection: 'column', marginLeft: 100}}>
+              <Text style={{fontWeight: 'bold', fontSize: 28, color: 'gold'}}>Gold: {this.state.gold}</Text>
+              <Button iconLeft style={{marginTop: 10, backgroundColor: 'gold'}} onPress={this.refresh}>
+                <Text style={{fontWeight: 'bold', fontSize: 20}}>Refresh Gold</Text>
+              </Button>
             </View>
-
-            <Text style={styles.getStartedText}>
-              Change this text and your app will automatically reload.
-            </Text>
           </View>
-
-          <View style={styles.helpContainer}>
-            <TouchableOpacity onPress={this._handleHelpPress} style={styles.helpLink}>
-              <Text style={styles.helpLinkText}>Help, it didn’t automatically reload!</Text>
-            </TouchableOpacity>
+          <View style={{flex: 1, flexDirection: 'row', width: '100%', alignItems: 'center', marginTop: 15}}>
+            <Image
+              source={{ uri: 'https://csg.tinkercad.com/things/6c43FB7tsM3/t725.png?rev=8&s=0c706e2a5f14b371bddbd2f508621f19&v=0' }}
+              style={{ width: 150, height: 120, marginVertical: 15, marginLeft: 20, marginRight: 30}}
+              resizeMode="cover"
+            />
+            <View style={{flex: 1}}>
+              <Text style={{fontWeight: 'bold', fontSize: 17}}>Price: 100</Text>
+              <Text style={{fontWeight: 'bold', fontSize: 17}}>+ 20 Attack Damage</Text>
+              <Button
+                iconLeft danger style={{marginTop: 10, width: 180, justifyContent: 'center'}}
+                onPress={() => {
+                  if (this.state.gold >= 100) {
+                    this.upgradeDart();
+                  } else {
+                    Alert.alert(
+                      'NOT ENOUGH GOLD',
+                      'Go workout more!',
+                      [
+                        {text: 'Okay', style: 'cancel'},
+                        {text: 'No, I do what I want!', onPress: () => {Alert.alert(`No, you won't`,'Go drink some water',[{text: 'Okay...', style: 'cancel'}])}, style: 'destructive'}
+                      ]
+                    )
+                  }
+                }}
+              >
+                <Text
+                style={{fontWeight: 'bold', fontSize: 17}}>
+                  Upgrade Dart Gun
+                </Text>
+              </Button>
+            </View>
           </View>
-        </ScrollView>
-
-        <View style={styles.tabBarInfoContainer}>
-          <Text style={styles.tabBarInfoText}>This is a tab bar. You can edit it in:</Text>
-
-          <View style={[styles.codeHighlightContainer, styles.navigationFilename]}>
-            <MonoText style={styles.codeHighlightText}>navigation/MainTabNavigator.js</MonoText>
+          <View style={{flex: 1, flexDirection: 'row', width: '100%', alignItems: 'center'}}>
+            <Image
+              source={{ uri: 'https://ae01.alicdn.com/kf/HTB1x39ZHVXXXXbaXVXXq6xXFXXX7/Free-shipping-hot-sale-the-Swift-Scout-Teemo-hat-Hero-alliance-around-cospaly-hat-LOL-Game.jpg' }}
+              style={{ width: 150, height: 120, marginVertical: 15, marginLeft: 20, marginRight: 30}}
+              resizeMode="cover"
+            />
+            <View style={{flex: 1}}>
+              <Text style={{fontWeight: 'bold', fontSize: 17}}>Price: 100</Text>
+              <Text style={{fontWeight: 'bold', fontSize: 17}}>+ 100 Health</Text>
+              <Button
+                iconLeft success style={{marginTop: 10, width: 180,justifyContent: 'center'}}
+                onPress={() => {
+                  if (this.state.gold >= 100) {
+                    this.upgradeHelmet();
+                  } else {
+                    Alert.alert(
+                      'NOT ENOUGH GOLD',
+                      'Go workout more!',
+                      [
+                        {text: 'Okay', style: 'cancel'},
+                        {text: 'No, I do what I want!', onPress: () => {Alert.alert(`No, you won't`,'Go drink some water',[{text: 'Okay...', style: 'cancel'}])}, style: 'destructive'}
+                      ]
+                    )
+                  }
+                }}
+              >
+                <Text style={{fontWeight: 'bold', fontSize: 17}}>Upgrade Helmet</Text>
+              </Button>
+            </View>
           </View>
-        </View>
-      </View>
+          <View style={{marginTop: 25}}>
+            <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 22}}>Current Attack Damage: 50</Text>
+            <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 22}}>Current Health: 250</Text>
+          </View>
+          <View style={{bottom: -100, position: 'absolute', flexDirection: 'row', alignSelf: 'center'}}>
+            <Text style={{bottom:-10, fontWeight: 'bold', marginLeft: 5}}>Developed by:</Text>
+            <Button bordered dark style={styles.mb15} onPress={this.goToGithub}>
+              <Text style={{fontWeight: 'bold', fontSize: 17}}>GitHub</Text>
+            </Button>
+            <Button bordered primary style={styles.mb15} onPress={this.goToLinkedin}>
+              <Text style={{fontWeight: 'bold', fontSize: 17}}>LinkedIn</Text>
+            </Button>
+          </View>
+        </Content>
+      </Container>
     );
   }
 
-  _maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      );
-
-      return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use useful development
-          tools. {learnMoreButton}
-        </Text>
-      );
-    } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
-      );
-    }
-  }
-
-  _handleLearnMorePress = () => {
-    WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
+  goToGithub = () => {
+    WebBrowser.openBrowserAsync('https://github.com/ljik95');
   };
 
-  _handleHelpPress = () => {
-    WebBrowser.openBrowserAsync(
-      'https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes'
-    );
+  goToLinkedin = () => {
+    WebBrowser.openBrowserAsync('https://www.linkedin.com/in/jongikthom/');
   };
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#FFF",
   },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
-  },
-  contentContainer: {
-    paddingTop: 30,
-  },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
+  mb15: {
+    marginBottom: 10,
+    height: 38,
+    paddingHorizontal: 15,
+    marginHorizontal: 10
   },
 });

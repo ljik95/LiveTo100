@@ -8,11 +8,11 @@ import {
   Item,
   Input,
   Button,
-  Icon
+  Icon,
 } from "native-base";
 import { Header } from 'react-native-elements';
 import { Pedometer } from 'expo'
-import { storeSteps, storeStartDate, fetchSteps, fetchStartDate } from '../Storage';
+import { storeSteps, storeStartDate, storeGold, fetchSteps, fetchStartDate, fetchGold } from '../Storage';
 
 export default class DataList extends React.Component {
 
@@ -21,13 +21,14 @@ export default class DataList extends React.Component {
     this.state = {
       name: 'Jay',
       age: 24,
+      gold: '0',
       start: '0',
       steps: 'Refresh Please',
       workOut: '0',
       water: '0',
       sleep: '0',
     };
-    this.powerUp = this.powerUp.bind(this);
+    this.turnIntoGold = this.turnIntoGold.bind(this);
     this.refresh = this.refresh.bind(this);
     this.getSteps = this.getSteps.bind(this);
   }
@@ -46,18 +47,24 @@ export default class DataList extends React.Component {
     );
   }
 
-  async powerUp() {
-    let stepCount = await fetchSteps();
-    this.setState({start: new Date(), steps: '0'})
-    storeSteps(this.state.steps)
-    storeStartDate(this.state.start)
+  async turnIntoGold() {
+    this.setState({gold: await fetchGold()});
+    let goldAddition = +this.state.workOut + (+this.state.water) * 7 + (+this.state.sleep) * 3;
+    if (typeof (+this.state.steps)/250 === 'number') {
+      goldAddition += (+this.state.steps)/250;
+    }
+    this.setState({gold: +this.state.gold + goldAddition});
+    this.setState({start: new Date(), steps: '0', workOut: '0', water: '0', sleep: '0'});
+    storeSteps(this.state.steps);
+    storeStartDate(this.state.start);
+    storeGold(this.state.gold);
   }
 
   refresh() {
     try {
       this.getSteps();
-      console.log(this.state.steps)
-      storeSteps(this.state.steps)
+      console.log(this.state.steps);
+      storeSteps(this.state.steps);
     } catch (err) {
       this.setState({
         steps: "Step count not available on your device"
@@ -68,53 +75,60 @@ export default class DataList extends React.Component {
   render() {
     return (
       <Container style={styles.container}>
-        <Header outerContainerStyles={{height: 130}}>
+        <Header outerContainerStyles={{height: 90}}>
           <Image
           source={{ uri: 'https://lh5.ggpht.com/j0fhQF9XI7o3_79a1w5gHQUMS5_GCWXVGmE_r1Pn_XZFDIWbxnn4JzNPAk5RcVpceg=w300' }}
-          style={{ width: 85, height: 80}}
+          style={{ width: 70, height: 67}}
           resizeMode="cover"
           />
-          <Text style={{fontSize: 27, fontWeight: 'bold'}}>Name: Jay</Text>
-          <Text style={{fontSize: 27, fontWeight: 'bold'}}>Age: 24</Text>
+          <Text style={{fontSize: 23, fontWeight: 'bold'}}>Name: Jay</Text>
+          <Text style={{fontSize: 23, fontWeight: 'bold'}}>Age: 24</Text>
         </Header>
-        <Content padder>
+        <Content>
           <Separator bordered style={{height: 42}}>
-            <Text style={{fontSize: 18}}>Steps taken since reset</Text>
+            <Text style={{fontSize: 17, fontWeight: 'bold'}}>Steps taken since reset</Text>
           </Separator>
           <ListItem>
             <Item regular>
               <Input
                 value={this.state.steps}
+                style={{fontSize: 15, height: 32}}
               />
             </Item>
           </ListItem>
           <Separator bordered style={{height: 42}}>
-            <Text style={{fontSize: 18}}>How many hours did you exercise since reset?</Text>
+            <Text style={{fontSize: 17, fontWeight: 'bold'}}>Minutes of exercise since reset?</Text>
           </Separator>
           <ListItem>
             <Item regular>
               <Input
-                placeholder={this.state.workOut}
+                value={this.state.workOut}
+                keyboardType='numeric'
+                style={{fontSize: 15, height: 32}}
                 onChangeText={(text) => this.setState({workOut: text})} />
             </Item>
           </ListItem>
           <Separator bordered style={{height: 42}}>
-            <Text style={{fontSize: 18}}>How much water did you drink since reset?</Text>
+            <Text style={{fontSize: 17, fontWeight: 'bold'}}>Amount of water drunk since reset? (Cup)</Text>
           </Separator>
           <ListItem last>
             <Item regular>
               <Input
-                placeholder={this.state.water}
+                value={this.state.water}
+                keyboardType='numeric'
+                style={{fontSize: 15, height: 32}}
                 onChangeText={(text) => this.setState({water: text})} />
             </Item>
           </ListItem>
           <Separator bordered style={{height: 42}}>
-            <Text style={{fontSize: 18}}>How many hours did you sleep since reset?</Text>
+            <Text style={{fontSize: 17, fontWeight: 'bold'}}>Hours of sleep since reset?</Text>
           </Separator>
           <ListItem>
             <Item regular>
               <Input
-                placeholder={this.state.sleep}
+                value={this.state.sleep}
+                keyboardType='numeric'
+                style={{fontSize: 15, height: 32}}
                 onChangeText={(text) => this.setState({sleep: text})} />
             </Item>
           </ListItem>
@@ -125,9 +139,9 @@ export default class DataList extends React.Component {
             </Button>
           </View>
           <View style={{ flexDirection: "row", justifyContent: 'center' }}>
-            <Button iconLeft danger style={{marginTop: 10}} onPress={this.powerUp}>
-              <Icon active name="body" />
-              <Text style={{marginHorizontal: 15, fontWeight: 'bold', fontSize: 28}}>Power Up!</Text>
+            <Button iconLeft style={{marginTop: 10, backgroundColor: 'gold'}} onPress={this.turnIntoGold}>
+              <Icon active name="cash" />
+              <Text style={{marginHorizontal: 15, fontWeight: 'bold', fontSize: 28}}>Turn into Gold</Text>
             </Button>
           </View>
         </Content>
@@ -139,6 +153,6 @@ export default class DataList extends React.Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#FFF",
-    marginTop: 15,
+    marginTop: 40,
   },
 });

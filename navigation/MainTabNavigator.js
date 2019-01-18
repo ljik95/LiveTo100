@@ -6,21 +6,19 @@ import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import { Icon } from 'native-base'
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
 });
 
 HomeStack.navigationOptions = {
-  tabBarLabel: 'Home',
+  tabBarLabel: 'Shop',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon
+    <Icon
+    style={{color: 'yellow'}}
       focused={focused}
-      name={
-        Platform.OS === 'ios'
-          ? `ios-information-circle${focused ? '' : '-outline'}`
-          : 'md-information-circle'
-      }
+      name='cart'
     />
   ),
 };
@@ -30,11 +28,12 @@ const LinksStack = createStackNavigator({
 });
 
 LinksStack.navigationOptions = {
-  tabBarLabel: 'Links',
+  tabBarLabel: 'Play',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon
+    <Icon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'}
+      style={{color: 'red'}}
+      name='flame'
     />
   ),
 };
@@ -44,17 +43,18 @@ const SettingsStack = createStackNavigator({
 });
 
 SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
+  tabBarLabel: 'Stats',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon
+    <Icon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'}
+      style={{color: 'green'}}
+      name='pulse'
     />
   ),
 };
 
 export default createBottomTabNavigator({
-  HomeStack,
-  LinksStack,
   SettingsStack,
+  LinksStack,
+  HomeStack,
 });

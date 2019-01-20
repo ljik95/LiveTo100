@@ -4,7 +4,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
+import Battle from '../screens/Battle';
 import SettingsScreen from '../screens/SettingsScreen';
 import { Icon } from 'native-base'
 
@@ -24,7 +24,7 @@ HomeStack.navigationOptions = {
 };
 
 const LinksStack = createStackNavigator({
-  Links: LinksScreen,
+  Links: Battle,
 });
 
 LinksStack.navigationOptions = {

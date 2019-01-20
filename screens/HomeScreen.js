@@ -13,7 +13,7 @@ import {
 } from "native-base";
 import { StyleSheet, View, Image, Alert } from 'react-native'
 import { WebBrowser } from 'expo';
-import { fetchGold, storeGold } from '../Storage';
+import { fetchGold, storeGold, fetchHelmet, fetchWeapon, storeHelmet, storeWeapon } from '../Storage';
 
 export default class HomeScreen extends React.Component {
 
@@ -34,26 +34,44 @@ export default class HomeScreen extends React.Component {
   }
 
   async componentDidMount() {
-    this.setState({gold: await fetchGold()});
+    this.setState({
+      gold: await fetchGold(),
+      weaponLvl: await fetchWeapon(),
+      helmetLvl: await fetchHelmet()
+    });
   }
 
   async refresh() {
-    this.setState({gold: await fetchGold()});
+    this.setState({
+      gold: await fetchGold(),
+      weaponLvl: await fetchWeapon(),
+      helmetLvl: await fetchHelmet()
+    });
   }
 
-  upgradeDart() {
-    storeGold(this.state.gold - 100);
+  async upgradeDart() {
     this.setState({
-      weaponLvl: this.state.weaponLvl + 1,
+      gold: await fetchGold(),
+      weaponLvl: await fetchWeapon(),
+    });
+    storeGold(this.state.gold - 100);
+    storeWeapon(+this.state.weaponLvl + 1)
+    this.setState({
+      weaponLvl: +this.state.weaponLvl + 1,
       gold: this.state.gold - 100
     })
     console.log(this.state.gold)
   }
 
-  upgradeHelmet() {
-    storeGold(this.state.gold - 100);
+  async upgradeHelmet() {
     this.setState({
-      helmetLvl: this.state.helmetLvl + 1,
+      gold: await fetchGold(),
+      helmetLvl: await fetchHelmet()
+    });
+    storeGold(this.state.gold - 100);
+    storeHelmet(+this.state.helmetLvl + 1)
+    this.setState({
+      helmetLvl: +this.state.helmetLvl + 1,
       gold: this.state.gold - 100
     })
   }
@@ -62,16 +80,17 @@ export default class HomeScreen extends React.Component {
     return (
       <Container style={styles.container}>
         <Content padder>
-          <View style={{flexDirection: 'row', justifyContent: 'center', height: 50, marginVertical: 20}}>
+          <View style={{flexDirection: 'row', height: 50, marginVertical: 20}}>
             <Image
             source={{ uri: 'https://lh5.ggpht.com/j0fhQF9XI7o3_79a1w5gHQUMS5_GCWXVGmE_r1Pn_XZFDIWbxnn4JzNPAk5RcVpceg=w300' }}
-            style={{ width: 70, height: 60}}
+            style={{ width: 80, height: 80, marginLeft: 60, marginTop: 5}}
             resizeMode="cover"
             />
-            <View style={{flexDirection: 'column', marginLeft: 100}}>
+            <View style={{flexDirection: 'column', marginLeft: 60}}>
               <Text style={{fontWeight: 'bold', fontSize: 28, color: 'gold'}}>Gold: {this.state.gold}</Text>
               <Button iconLeft style={{marginTop: 10, backgroundColor: 'gold'}} onPress={this.refresh}>
-                <Text style={{fontWeight: 'bold', fontSize: 20}}>Refresh Gold</Text>
+                <Icon active name="refresh" />
+                <Text style={{fontWeight: 'bold', fontSize: 20}}>Refresh</Text>
               </Button>
             </View>
           </View>
@@ -95,7 +114,7 @@ export default class HomeScreen extends React.Component {
                       'Go workout more!',
                       [
                         {text: 'Okay', style: 'cancel'},
-                        {text: 'No, I do what I want!', onPress: () => {Alert.alert(`No, you won't`,'Go drink some water',[{text: 'Okay...', style: 'cancel'}])}, style: 'destructive'}
+                        {text: 'I do what I want!', onPress: () => {Alert.alert(`No, you won't`,'Go drink some water',[{text: 'Okay...', style: 'cancel'}])}, style: 'destructive'}
                       ]
                     )
                   }
@@ -128,7 +147,7 @@ export default class HomeScreen extends React.Component {
                       'Go workout more!',
                       [
                         {text: 'Okay', style: 'cancel'},
-                        {text: 'No, I do what I want!', onPress: () => {Alert.alert(`No, you won't`,'Go drink some water',[{text: 'Okay...', style: 'cancel'}])}, style: 'destructive'}
+                        {text: 'I do what I want!', onPress: () => {Alert.alert(`No, you won't`,'Go drink some water',[{text: 'Okay...', style: 'cancel'}])}, style: 'destructive'}
                       ]
                     )
                   }
@@ -139,8 +158,8 @@ export default class HomeScreen extends React.Component {
             </View>
           </View>
           <View style={{marginTop: 25}}>
-            <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 22}}>Current Attack Damage: 50</Text>
-            <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 22}}>Current Health: 250</Text>
+            <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 22}}>Current Attack Damage: {`${50 + 20 * this.state.weaponLvl}`}</Text>
+            <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 22}}>Current Health: {`${250 + 100 * this.state.helmetLvl}`}</Text>
           </View>
           <View style={{bottom: -100, position: 'absolute', flexDirection: 'row', alignSelf: 'center'}}>
             <Text style={{bottom:-10, fontWeight: 'bold', marginLeft: 5}}>Developed by:</Text>

@@ -1,14 +1,15 @@
 import React from 'react';
 import LinksScreen from './LinksScreen';
-import { fetchHelmet, fetchWeapon } from '../Storage';
+import { fetchHelmet, fetchWeapon, fetchStage, storeStage, storeWeapon, storeHelmet } from '../Storage';
 import { Button, Icon } from 'native-base';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 
 export default class Battle extends React.Component {
 
   state = {
-    weaponLvl: 1,
-    helmetLvl: 1,
+    weaponLvl: 0,
+    helmetLvl: 0,
+    stage: 1,
     redering: false
   }
 
@@ -17,21 +18,22 @@ export default class Battle extends React.Component {
   };
 
   async componentDidMount() {
-    this.setState({weaponLvl: await fetchWeapon()});
-    this.setState({helmetLvl: await fetchHelmet()});
+    storeStage(1)
+    this.setState({weaponLvl: await fetchWeapon(), helmetLvl: await fetchHelmet(), stage: await fetchStage()});
   }
 
   render() {
     return (
       this.state.rendering ?
       (
-        <LinksScreen weaponLvl={this.state.weaponLvl} helmetLvl={this.state.helmetLvl} />
+        <LinksScreen weaponLvl={this.state.weaponLvl} helmetLvl={this.state.helmetLvl} stage={this.state.stage} />
       ) :
       (
-        <Button iconLeft style={{marginTop: 10, backgroundColor: 'gold'}} onPress={() => this.setState({rendering:true})}>
-          <Icon active name="refresh" />
-          <Text style={{fontWeight: 'bold', fontSize: 20}}>PLAY</Text>
-        </Button>
+        <View style={{backgroundColor: 'gray', height: '100%', justifyContent: 'center'}}>
+          <Button iconLeft style={{marginTop: 10, backgroundColor: 'gold', height: 80, alignSelf: 'center'}} onPress={() => this.setState({rendering:true})}>
+            <Text style={{fontWeight: 'bold', fontSize: 40, marginHorizontal: 15}}>Ready to battle</Text>
+          </Button>
+        </View>
       )
     )
   }

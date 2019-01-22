@@ -63,6 +63,20 @@ export const storeHelmet = async (lvl) => {
   }
 }
 
+export const storeStage = async (stage) => {
+  try {
+    if (await AsyncStorage.getItem('stage') !== null) {
+      await AsyncStorage.removeItem('stage');
+      await AsyncStorage.setItem('stage', JSON.stringify(stage));
+    } else {
+      console.log(await AsyncStorage.getItem('stage'), 'IDK')
+      await AsyncStorage.setItem('stage', JSON.stringify(stage));
+    }
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 export const fetchSteps = async () => {
   try {
     const value = await AsyncStorage.getItem('steps');
@@ -118,3 +132,15 @@ export const fetchHelmet = async () => {
     console.error(err)
    }
 }
+
+export const fetchStage = async () => {
+  try {
+    const value = await AsyncStorage.getItem('stage');
+    if (value !== null) {
+      return JSON.parse(value);
+    }
+   } catch (err) {
+    console.error(err)
+   }
+}
+

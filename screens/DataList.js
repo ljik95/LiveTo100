@@ -20,7 +20,6 @@ export default class DataList extends React.Component {
     super();
     this.state = {
       name: 'Jay',
-      age: 24,
       gold: '0',
       start: '0',
       steps: 'Refresh Please',
@@ -81,8 +80,7 @@ export default class DataList extends React.Component {
           style={{ width: 70, height: 67}}
           resizeMode="cover"
           />
-          <Text style={{fontSize: 23, fontWeight: 'bold'}}>Name: Jay</Text>
-          <Text style={{fontSize: 23, fontWeight: 'bold'}}>Age: 24</Text>
+          <Text style={{fontSize: 27, fontWeight: 'bold', marginRight: 200, marginBottom: 15}}>Jay</Text>
         </Header>
         <Content>
           <Separator bordered style={{height: 42}}>

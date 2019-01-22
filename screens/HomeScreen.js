@@ -21,8 +21,8 @@ export default class HomeScreen extends React.Component {
     super();
     this.state = {
       gold: 0,
-      weaponLvl: 1,
-      helmetLvl: 1,
+      weaponLvl: 0,
+      helmetLvl: 0,
     }
     this.refresh = this.refresh.bind(this);
     this.upgradeDart = this.upgradeDart.bind(this);
@@ -159,7 +159,7 @@ export default class HomeScreen extends React.Component {
           </View>
           <View style={{marginTop: 25}}>
             <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 22}}>Current Attack Damage: {`${50 + 20 * this.state.weaponLvl}`}</Text>
-            <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 22}}>Current Health: {`${250 + 100 * this.state.helmetLvl}`}</Text>
+            <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 22}}>Current Health: {`${200 + 100 * this.state.helmetLvl}`}</Text>
           </View>
           <View style={{bottom: -100, position: 'absolute', flexDirection: 'row', alignSelf: 'center'}}>
             <Text style={{bottom:-10, fontWeight: 'bold', marginLeft: 5}}>Developed by:</Text>

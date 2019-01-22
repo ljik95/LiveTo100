@@ -11,7 +11,7 @@ export default class LinksScreen extends React.Component {
     this.state = {
       weaponLvl: props.weaponLvl,
       helmetLvl: props.helmetLvl,
-      stage: props.stage,
+      stage: 1,
       myMax: 0,
       myHealth: 0,
       myDMG: 0,
@@ -28,33 +28,23 @@ export default class LinksScreen extends React.Component {
       lost: false,
       fadeAnim: new Animated.Value(0)
     }
+    console.log(props)
     this.attack = this.attack.bind(this);
     this.reset = this.reset.bind(this);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.setState({
-      myMax: 200 + this.state.helmetLvl * 100,
-      myHealth: 200 + this.state.helmetLvl * 100,
-      myDMG: 50 + this.state.weaponLvl * 20,
+      myMax: 200 + await fetchHelmet() * 100,
+      myHealth: 200 + await fetchHelmet() * 100,
+      myDMG: 50 + await fetchWeapon() * 20,
       monsterMax: 200 + this.state.stage * 150,
       monsterHealth: 200 + this.state.stage * 150,
       monsterDMG: 10 + this.state.stage * 30
     });
-    // console.log(this.state.stage, 'STAGE')
-    // switch (this.state.stage) {
-    //   case 1:
-    //     this.setState({monsterName: 'French Fries'})
-    //   case 2:
-    //     this.setState({monsterName: 'Beer'})
-    //   case 3:
-    //     this.setState({monsterName: 'Fried Shrimp'})
-    //   case 4:
-    //     this.setState({monsterName: 'Donut'})
-    // }
   }
 
-  attack() {
+  async attack() {
     this.state.fadeAnim.setValue(1);
     Animated.timing(
       this.state.fadeAnim,
@@ -66,9 +56,9 @@ export default class LinksScreen extends React.Component {
     if (this.state.monsterHealth - this.state.myDMG <= 0) {
       this.setState({
         stage: this.state.stage + 1,
-        myMax: 200 + this.state.helmetLvl * 100,
-        myHealth: 200 + this.state.helmetLvl * 100,
-        myDMG: 50 + this.state.weaponLvl * 20,
+        myMax: 200 + await fetchHelmet() * 100,
+        myHealth: 200 + await fetchHelmet() * 100,
+        myDMG: 50 + await fetchWeapon() * 20,
         monsterMax: 350 + this.state.stage * 150,
         monsterHealth: 350 + this.state.stage * 150,
         monsterDMG: 40 + this.state.stage * 30
@@ -85,8 +75,10 @@ export default class LinksScreen extends React.Component {
 
   async reset() {
     this.setState({
+      myMax: 200 + await fetchHelmet() * 100,
       myHealth: 200 + await fetchHelmet() * 100,
       myDMG: 50 + await fetchWeapon() * 20,
+      monsterMax: 200 + this.state.stage * 150,
       monsterHealth: 200 + this.state.stage * 150,
       monsterDMG: 10 + this.state.stage * 30,
       lost: false,
@@ -96,15 +88,21 @@ export default class LinksScreen extends React.Component {
 
   render() {
     let stage = +this.state.stage;
+    console.log(this.state)
     return (
       !this.state.lost ?
         <Content contentContainerStyle={styles.container}>
           <ImageBackground source={{ uri:`/Users/Sangyun/Desktop/Coding/SeniorPhase/LiveTo100/assets/images/Stage${stage}` }} style={styles.backgroundImage}>
-            <View>
-              <Text style={{fontWeight: 'bold', fontSize: 35}}>Stage: {stage}</Text>
+            <View style={{marginLeft: 10, marginTop: 5}}>
+              <Text style={{fontWeight: 'bold', fontSize: 38, fontStyle: 'italic', textDecorationLine: 'underline'}}>Stage: {stage}</Text>
             </View>
             <View style={{flexDirection: 'column', position: 'absolute', marginLeft: 220, marginTop: 5}}>
-              <Text style={styles.txt}>{this.state.monsterName[stage - 1]}</Text>
+              <Text style={{
+                fontSize: 30,
+                fontWeight: 'bold',
+                textDecorationLine: 'underline',
+                fontStyle: 'italic'
+              }}>{this.state.monsterName[stage - 1]}</Text>
               <Text style={styles.txt}>Health: {this.state.monsterHealth} / {this.state.monsterMax}</Text>
               <Text style={styles.txt}>Attack DMG: {this.state.monsterDMG}</Text>
               <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: -60, marginTop: 10}}>
@@ -134,7 +132,12 @@ export default class LinksScreen extends React.Component {
                 source={{ uri:'/Users/Sangyun/Desktop/Coding/SeniorPhase/LiveTo100/assets/images/Teemo.png' }}
                 style={{width: 180, height: 160}}
               />
-              <Text style={styles.txt}>Jay</Text>
+              <Text style={{
+                fontSize: 30,
+                fontWeight: 'bold',
+                textDecorationLine: 'underline',
+                fontStyle: 'italic'
+              }}>Jay</Text>
               <Text style={styles.txt}>Health: {this.state.myHealth} / {this.state.myMax}</Text>
               <Text style={styles.txt}>Attack DMG: {this.state.myDMG}</Text>
             </View>

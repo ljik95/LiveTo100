@@ -1,6 +1,6 @@
 import React from 'react';
 import LinksScreen from './LinksScreen';
-import { fetchHelmet, fetchWeapon, fetchStage, storeStage, storeWeapon, storeHelmet } from '../Storage';
+import { fetchHelmet, fetchWeapon, fetchStage, storeStage, storeGold, storeWeapon, storeHelmet } from '../Storage';
 import { Button, Icon } from 'native-base';
 import { Text, View } from 'react-native';
 
@@ -18,8 +18,8 @@ export default class Battle extends React.Component {
   };
 
   async componentDidMount() {
-    storeStage(1)
     this.setState({weaponLvl: await fetchWeapon(), helmetLvl: await fetchHelmet(), stage: await fetchStage()});
+    storeStage(1)
   }
 
   render() {

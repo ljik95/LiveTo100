@@ -114,7 +114,6 @@ export const fetchWeapon = async () => {
   try {
     const value = await AsyncStorage.getItem('weaponLvl');
     if (value !== null) {
-      console.log(JSON.parse(value))
       return JSON.parse(value);
     }
    } catch (err) {
@@ -126,6 +125,7 @@ export const fetchHelmet = async () => {
   try {
     const value = await AsyncStorage.getItem('helmetLvl');
     if (value !== null) {
+      console.log(JSON.parse(value))
       return JSON.parse(value);
     }
    } catch (err) {

@@ -77,10 +77,10 @@ export default class DataList extends React.Component {
         <Header outerContainerStyles={{height: 90}}>
           <Image
           source={{ uri: 'https://lh5.ggpht.com/j0fhQF9XI7o3_79a1w5gHQUMS5_GCWXVGmE_r1Pn_XZFDIWbxnn4JzNPAk5RcVpceg=w300' }}
-          style={{ width: 70, height: 67}}
+          style={{ width: 70, height: 67, marginLeft: 10}}
           resizeMode="cover"
           />
-          <Text style={{fontSize: 27, fontWeight: 'bold', marginRight: 200, marginBottom: 15}}>Jay</Text>
+          <Text style={{fontSize: 25, fontWeight: 'bold', marginRight: 30, marginBottom: 5}}>Name: Jay</Text>
         </Header>
         <Content>
           <Separator bordered style={{height: 42}}>

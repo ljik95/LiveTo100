@@ -87,7 +87,7 @@ export default class HomeScreen extends React.Component {
             resizeMode="cover"
             />
             <View style={{flexDirection: 'column', marginLeft: 60}}>
-              <Text style={{fontWeight: 'bold', fontSize: 28, color: 'gold'}}>Gold: {this.state.gold}</Text>
+              <Text style={{fontWeight: 'bold', fontSize: 30, color: 'gold'}}>Gold: {this.state.gold}</Text>
               <Button iconLeft style={{marginTop: 10, backgroundColor: 'gold'}} onPress={this.refresh}>
                 <Icon active name="refresh" />
                 <Text style={{fontWeight: 'bold', fontSize: 20}}>Refresh</Text>
@@ -101,8 +101,8 @@ export default class HomeScreen extends React.Component {
               resizeMode="cover"
             />
             <View style={{flex: 1}}>
-              <Text style={{fontWeight: 'bold', fontSize: 17}}>Price: 100</Text>
-              <Text style={{fontWeight: 'bold', fontSize: 17}}>+ 20 Attack Damage</Text>
+              <Text style={{fontWeight: 'bold', fontSize: 20}}>Price: 100</Text>
+              <Text style={{fontWeight: 'bold', fontSize: 20}}>+ 20 Attack Damage</Text>
               <Button
                 iconLeft danger style={{marginTop: 10, width: 180, justifyContent: 'center'}}
                 onPress={() => {
@@ -134,8 +134,8 @@ export default class HomeScreen extends React.Component {
               resizeMode="cover"
             />
             <View style={{flex: 1}}>
-              <Text style={{fontWeight: 'bold', fontSize: 17}}>Price: 100</Text>
-              <Text style={{fontWeight: 'bold', fontSize: 17}}>+ 100 Health</Text>
+              <Text style={{fontWeight: 'bold', fontSize: 20}}>Price: 100</Text>
+              <Text style={{fontWeight: 'bold', fontSize: 20}}>+ 100 Health</Text>
               <Button
                 iconLeft success style={{marginTop: 10, width: 180,justifyContent: 'center'}}
                 onPress={() => {
@@ -161,7 +161,7 @@ export default class HomeScreen extends React.Component {
             <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 22}}>Current Attack Damage: {`${50 + 20 * this.state.weaponLvl}`}</Text>
             <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 22}}>Current Health: {`${200 + 100 * this.state.helmetLvl}`}</Text>
           </View>
-          <View style={{bottom: -100, position: 'absolute', flexDirection: 'row', alignSelf: 'center'}}>
+          <View style={{bottom: -100, position: 'absolute', flexDirection: 'row', alignSelf: 'center', borderTopWidth: 3, borderTopColor: 'black', paddingTop: 15}}>
             <Text style={{bottom:-10, fontWeight: 'bold', marginLeft: 5}}>Developed by:</Text>
             <Button bordered dark style={styles.mb15} onPress={this.goToGithub}>
               <Text style={{fontWeight: 'bold', fontSize: 17}}>GitHub</Text>
